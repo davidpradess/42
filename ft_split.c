@@ -6,7 +6,7 @@
 /*   By: dprades <dprades@student.42barcelo>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 20:43:12 by dprades           #+#    #+#             */
-/*   Updated: 2024/02/03 20:11:34 by dprades          ###   ########.fr       */
+/*   Updated: 2024/02/03 21:23:57 by dprades          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	word_count(const char *s, char c)
 	int	i;
 
 	i = 0;
-	count_of_str = 0; 
+	count_of_str = 0;
 	its_a_str = 0;
 	while (s[i] != '\0')
 	{
@@ -35,7 +35,7 @@ static int	word_count(const char *s, char c)
 			its_a_str = 0;
 		i++;
 	}
-	return (count_of_str);	
+	return (count_of_str);
 }
 
 static void	free_copy_substrs(char **substrs)
@@ -43,7 +43,7 @@ static void	free_copy_substrs(char **substrs)
 	int	i;
 
 	if (substrs == NULL)
-		return;
+		return ;
 	i = 0;
 	while (substrs[i] != NULL)
 	{
@@ -53,50 +53,50 @@ static void	free_copy_substrs(char **substrs)
 	free(substrs);
 }
 
-static void	copy_substrs(char **substrs, const char *str, char delimiter)
+static int	copy_substrs(char **substrs, const char *str, char delimiter)
 {
 	int	i;
 	int	j;
 	int	start;
-	int	substrlen;
 
 	i = 0;
 	j = 0;
-	while (str[i] != '\0') {
-		if (str[i] != delimiter && (i == 0 || str[i - 1] == delimiter)) {
+	while (str[i] != '\0')
+	{
+		if (str[i] != delimiter && (i == 0 || str[i - 1] == delimiter))
+		{
 			start = i;
 			while (str[i] != '\0' && str[i] != delimiter)
 				i++;
-			substrlen = i - start;
-			substrs[j] = ft_substr(str, (unsigned int) start, substrlen + 1);
-			if (substrs[j] == NULL) {
+			substrs[j] = ft_substr(str, (unsigned int) start, i - start);
+			if (substrs[j++] == NULL)
+			{
 				free_copy_substrs(substrs);
-				return;
-			}
-			j++;
-			}
-			else {
-				i++; //aqui esta el bucle infinito
+				return (0);
 			}
 		}
-		substrs[j] = NULL;
+		else
+			i++;
+	}
+	substrs[j] = NULL;
+	return (1);
 }
 
 char	**ft_split(char const *s, char c)
 {
 	int		num_substr;
 	char	**substrs;
-	
+
 	num_substr = word_count(s, c);
 	substrs = malloc((num_substr + 1) * sizeof(char *));
 	if (!substrs)
 		return (NULL);
-
-	copy_substrs(substrs, s, c);
+	if (!copy_substrs(substrs, s, c))
+		return (NULL);
 	return (substrs);
 }
 
-int	main(void)
+/*int	main(void)
 {
 	char	*str = "Hola,como estas,Con split.";
 	char	del = ',';
@@ -114,4 +114,4 @@ int	main(void)
 		free(result);
 	}
 	return (0);	
-}
+}*/
